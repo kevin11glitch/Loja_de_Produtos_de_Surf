@@ -25,15 +25,15 @@ O sistema oferece uma interface interativa com as seguintes operações:
 1.  Certifique-se de que tem um compilador C instalado (GCC, Clang ou MinGW).
 2.  Clone o repositório:
     ```bash
-    git clone [https://github.com/kevin11glitch/tati-surf-co.git](https://github.com/kevin11glitch/tati-surf-co.git)
+    git clone [https://github.com/kevin11glitch/Loja_de_Produtos_de_Surf.git]
     ```
 3.  Compile o programa:
     ```bash
-    gcc main.c -o tati_surf_co
+    gcc Loja_Surf.c -o programa.exe
     ```
 4.  Execute a aplicação:
     ```bash
-    ./tati_surf_co
+    programa.exe
     ```
 
 ## 📂 Estrutura do Nó (Struct)
