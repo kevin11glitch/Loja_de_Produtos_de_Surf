@@ -180,6 +180,27 @@ void comprar_produto(int codigo){
     
 }
 
+void desenhar_surfista() {
+    printf("                   -.--.\n");
+    printf("                   )  \" '-,\n");
+    printf("                   ',' 2  \\_\n");
+    printf("                    \\q \\ .  \\\n");
+    printf("                 _.--'  '----.__\n");
+    printf("                /  ._      _.__ \\__\n");
+    printf("             _.'_.'  \\_ .-._\\_ '-, }\n");
+    printf("            (,/ _.---;-(  . \\ \\   ~\n");
+    printf("          ____ (  .___\\_\\  \\/_/\n");
+    printf("         (      '-._ \\   \\ |\n");
+    printf("          '._       ),> _) >\n");
+    printf("             '-._ c='  Cooo  -._\n");
+    printf("                 '-._           '.\n");
+    printf("                     '-._         `\\\n");
+    printf("                snd      '-._       '.\n");
+    printf("                             '-._     \\\n");
+    printf("                                 `~---'\n\n");
+}
+
+
 int main() {
     recebimento(2012, "Quilha", "Futures Fins - AM1 Honeycomb Medium", 550.00);
     recebimento(2004, "Parafina", "Banana Wax - Eco Friendly", 12.00);
@@ -189,7 +210,7 @@ int main() {
     recebimento(2015, "Quilha", "Scarfini - HX3 Carbon Hybrid", 310.00);
     recebimento(2010, "Leash", "Pro-Lite - Surf Series 5ft", 98.00);
     recebimento(2017, "Deck", "FCS T-3 - Traction Blue Line", 195.00);
-    recebimento(2001, "Parafina", "Sticky Bumps - Água Fria", 15.50);
+    recebimento(2001, "Parafina", "Sticky Bumps - Agua Fria", 15.50);
     recebimento(2011, "Quilha", "FCS II Carver - Neo Glass Large", 420.00);
     recebimento(2008, "Leash", "Creatures of Leisure - Reliance 6ft", 160.00);
     recebimento(2020, "Deck", "Astrodeck - Nathan Fletcher Signature", 205.00);
@@ -197,7 +218,7 @@ int main() {
     recebimento(2014, "Quilha", "Shapers Fins - S5 Thruster Carbon", 390.00);
     recebimento(2007, "Leash", "Dakine Kainui - 7ft Blue", 145.50);
     recebimento(2016, "Deck", "Gorilla Grip - Jane Tail Pad", 215.00);
-    recebimento(2005, "Parafina", "Magical Wax - Competição", 25.00);
+    recebimento(2005, "Parafina", "Magical Wax - Competicao", 25.00);
     recebimento(2013, "Quilha", "Captain Fin - Dane Reynolds Summer", 480.00);
     recebimento(2009, "Leash", "Ocean & Earth - Regular 8ft", 120.00);
     recebimento(2018, "Deck", "Dakine Launch - Pad Orange", 175.40);
@@ -207,6 +228,7 @@ int main() {
     char escolha[50];
     float min, max;
     printf("-- Bem-vindo(a) a loja Tati Surf Co! --\n\n");
+    desenhar_surfista();
 
     do{
         printf("-> Opcao 1: Ver produtos disponiveis para compra\n");
