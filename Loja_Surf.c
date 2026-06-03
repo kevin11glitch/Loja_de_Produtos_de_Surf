@@ -16,8 +16,24 @@ typedef struct NO{
 
 }NO;
 
+typedef struct NO2{
+    char *nome_cliente;
+    int cpf;
+    int cep;
+    char *nome_rua;
+    int num_casa;
+    char *complemento;
+
+    struct NO2 *prox;
+}NO2;
+
 NO *inicio = NULL;
 NO *fim = NULL;
+
+NO2 *inicio_fila = NULL;
+NO2 *fim_fila = NULL;
+
+
 int tam = 0;
 
 void recebimento(int codigo, char * tipo_prod, char* descricao, float preco){
@@ -126,35 +142,36 @@ void vizualizar_preco(float minimo, float maximo){
     }
 }
 
+void imprimir_produto_comprado(NO* produto){
+    printf("--- PRODUTO COMPRADO COM SUCESSO ---\n\n");
+    printf("CODIGO: %d\n", produto->codigo);
+    printf("TIPO: %s\n", produto->tipo_prod);
+    printf("DESCRICAO: %s\n", produto->descricao);
+    printf("PRECO: R$ %.2f\n", produto->preco);
+    printf("----------------------------\n\n");
+}
 
-void comprar_produto(int codigo){
+
+NO* comprar_produto(int codigo){
 
     if(inicio->codigo == codigo){ //inicio
-        NO *lixo = inicio;
-        printf("--- PRODUTO COMPRADO COM SUCESSO ---\n\n");
-        printf("CODIGO: %d\n", lixo->codigo);
-        printf("TIPO: %s\n", lixo->tipo_prod);
-        printf("DESCRICAO: %s\n", lixo->descricao);
-        printf("PRECO: R$ %.2f\n", lixo->preco);
-        printf("----------------------------\n\n");
+        NO *aux = inicio;
         inicio = inicio->prox;
         inicio->ant = NULL;
         if(tam == 1){
             fim = NULL;
         }
-        free(lixo);
+        //free(aux);
+        imprimir_produto_comprado(aux);
+        return aux;
         tam--;
     }else if(fim->codigo == codigo){ // fim
-        NO *lixo = fim;
-        printf("--- PRODUTO COMPRADO COM SUCESSO ---\n\n");
-        printf("CODIGO: %d\n", lixo->codigo);
-        printf("TIPO: %s\n", lixo->tipo_prod);
-        printf("DESCRICAO: %s\n", lixo->descricao);
-        printf("PRECO: R$ %.2f\n", lixo->preco);
-        printf("----------------------------\n\n");
+        NO *aux = fim;
         fim->ant->prox = NULL;
         fim = fim->ant;
-        free(lixo);
+        //free(aux);
+        imprimir_produto_comprado(aux);
+        return aux;
         tam--;
     }else{
         //meio....
@@ -164,19 +181,13 @@ void comprar_produto(int codigo){
             aux = aux->prox;
         }
         lixo = aux->prox;
-        printf("--- PRODUTO COMPRADO COM SUCESSO ---\n\n");
-        printf("CODIGO: %d\n", lixo->codigo);
-        printf("TIPO: %s\n", lixo->tipo_prod);
-        printf("DESCRICAO: %s\n", lixo->descricao);
-        printf("PRECO: R$ %.2f\n", lixo->preco);
-        printf("----------------------------\n\n");
         aux->prox = lixo->prox;
         aux->prox->ant = aux; 
-        free(lixo);
+        //free(lixo);
+        imprimir_produto_comprado(lixo);
         tam--;
-        
+        return lixo;
     }
-
     
 }
 
@@ -227,7 +238,7 @@ int main() {
     int opcao, codigo;
     char escolha[50];
     float min, max;
-    printf("-- Bem-vindo(a) a loja Tati Surf Co! --\n\n");
+    printf("-- Bem-vindo(a) à loja Tati Surf Co! --\n\n");
     desenhar_surfista();
 
     do{
