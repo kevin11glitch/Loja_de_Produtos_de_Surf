@@ -343,9 +343,29 @@ int main() {
         
         case 4:
             system("cls");
+            char *nome, *nome_rua, *complemento;
+            int cpf, cep, num_casa;
             printf("Digite o codigo do produto que gostaria de comprar: ");
-            scanf("%d", &codigo);
-            comprar_produto(codigo);
+            scanf("%d", &codigo);            
+            NO*produto_removido = comprar_produto(codigo);
+
+            printf("--- DIGITE SEUS DADOS PARA ENTREGA ---\n\n");
+            printf("Nome do Cliente: ");
+            scanf(" %[^\n]", nome);
+            printf("CPF (somente numeros): ");
+            scanf("%d", &cpf);
+            printf("CEP: ");
+            scanf("%d", &cep);
+            printf("Nome da Rua: ");
+            scanf(" %[^\n]", nome_rua);
+            printf("Numero da Casa/Apto: ");
+            scanf("%d", &num_casa);
+            printf("Complemento: ");
+            scanf(" %[^\n]", complemento);
+
+            fila_pedidos_entrega(produto_removido, nome, cpf, cep, nome_rua, num_casa, complemento);
+            printf("Pedido adicionado a fila de entregas com sucesso!\n\n");
+
             break;
 
         case 5:
