@@ -11,12 +11,21 @@ typedef struct NO{
     float preco;
 
     //mecanismo de uniao de nos
-    struct NO * prox;
+    struct NO *prox;
     struct NO *ant;
 
 }NO;
 
-typedef struct NO2{
+NO *inicio = NULL;
+NO *fim = NULL;
+int tam = 0;
+
+typedef struct NO_FILA{
+    int codigo;
+    char* tipo_prod;
+    char* descricao;
+    float preco;
+
     char *nome_cliente;
     int cpf;
     int cep;
@@ -24,17 +33,14 @@ typedef struct NO2{
     int num_casa;
     char *complemento;
 
-    struct NO2 *prox;
-}NO2;
+    struct NO_FILA *prox;
+}NO_FILA;
 
-NO *inicio = NULL;
-NO *fim = NULL;
-
-NO2 *inicio_fila = NULL;
-NO2 *fim_fila = NULL;
+NO_FILA *inicio_fila = NULL;
+NO_FILA *fim_fila = NULL;
+int tam_fila = 0;
 
 
-int tam = 0;
 
 void recebimento(int codigo, char * tipo_prod, char* descricao, float preco){
    
@@ -163,16 +169,16 @@ NO* comprar_produto(int codigo){
         }
         //free(aux);
         imprimir_produto_comprado(aux);
-        return aux;
         tam--;
+        return aux;
     }else if(fim->codigo == codigo){ // fim
         NO *aux = fim;
         fim->ant->prox = NULL;
         fim = fim->ant;
         //free(aux);
         imprimir_produto_comprado(aux);
-        return aux;
         tam--;
+        return aux;
     }else{
         //meio....
         NO *aux = inicio;
@@ -191,6 +197,39 @@ NO* comprar_produto(int codigo){
     
 }
 
+void fila_pedidos_entrega(NO* produto_comprado, char *nome_cliente, int cpf, int cep, char *nome_rua, int num_casa, char *complemento){
+    NO_FILA *novo = malloc(sizeof(NO_FILA));
+    novo->codigo = produto_comprado->codigo;
+    novo->tipo_prod = produto_comprado->tipo_prod;
+    novo->descricao = produto_comprado->descricao;
+    novo->preco = produto_comprado->preco;
+    novo->nome_cliente = nome_cliente;
+    novo->cpf = cpf;
+    novo->cep = cep;
+    novo->nome_rua = nome_rua;
+    novo->num_casa = num_casa;
+    novo->complemento = complemento;
+    novo->prox = NULL;
+
+    if(inicio_fila == NULL){ //fila vazia
+        //operacao de encaixe
+        inicio_fila = novo;
+        fim_fila = novo;
+        tam++;
+    }else{ // fila nao esta vazia...
+        fim_fila->prox = novo;
+        fim_fila = novo;
+        tam++;
+    }
+
+    free(produto_comprado);
+
+}
+
+void entregar_pedido(NO_FILA*produto){
+
+}
+
 void desenhar_surfista() {
     printf("                   -.--.\n");
     printf("                   )  \" '-,\n");
@@ -203,36 +242,66 @@ void desenhar_surfista() {
     printf("          ____ (  .___\\_\\  \\/_/\n");
     printf("         (      '-._ \\   \\ |\n");
     printf("          '._       ),> _) >\n");
-    printf("             '-._ c='  Cooo  -._\n");
+    printf("             '-._   '        -._\n");
     printf("                 '-._           '.\n");
     printf("                     '-._         `\\\n");
-    printf("                snd      '-._       '.\n");
+    printf("                         '-._       '.\n");
     printf("                             '-._     \\\n");
     printf("                                 `~---'\n\n");
 }
 
 
 int main() {
-    recebimento(2012, "Quilha", "Futures Fins - AM1 Honeycomb Medium", 550.00);
-    recebimento(2004, "Parafina", "Banana Wax - Eco Friendly", 12.00);
-    recebimento(2019, "Deck", "Creatures of Leisure - Italo Ferreira Lite", 240.00);
-    recebimento(2006, "Leash", "FCS Freedom - 6ft Black", 185.00);
-    recebimento(2002, "Parafina", "Fu Wax - Tropical Summer", 22.00);
-    recebimento(2015, "Quilha", "Scarfini - HX3 Carbon Hybrid", 310.00);
-    recebimento(2010, "Leash", "Pro-Lite - Surf Series 5ft", 98.00);
-    recebimento(2017, "Deck", "FCS T-3 - Traction Blue Line", 195.00);
-    recebimento(2001, "Parafina", "Sticky Bumps - Agua Fria", 15.50);
-    recebimento(2011, "Quilha", "FCS II Carver - Neo Glass Large", 420.00);
-    recebimento(2008, "Leash", "Creatures of Leisure - Reliance 6ft", 160.00);
-    recebimento(2020, "Deck", "Astrodeck - Nathan Fletcher Signature", 205.00);
-    recebimento(2003, "Parafina", "Sex Wax - Coconut High Grip", 18.90);
-    recebimento(2014, "Quilha", "Shapers Fins - S5 Thruster Carbon", 390.00);
-    recebimento(2007, "Leash", "Dakine Kainui - 7ft Blue", 145.50);
-    recebimento(2016, "Deck", "Gorilla Grip - Jane Tail Pad", 215.00);
-    recebimento(2005, "Parafina", "Magical Wax - Competicao", 25.00);
-    recebimento(2013, "Quilha", "Captain Fin - Dane Reynolds Summer", 480.00);
-    recebimento(2009, "Leash", "Ocean & Earth - Regular 8ft", 120.00);
-    recebimento(2018, "Deck", "Dakine Launch - Pad Orange", 175.40);
+    recebimento(3042, "Quilha", "Deflow - Twin Keel Machado", 345.00);
+    recebimento(3015, "Parafina", "Fu Wax - Summer Tropical", 150.00);
+    recebimento(3003, "Quilha", "FCS II Performer - PC Carbon", 545.00);
+    recebimento(3049, "Leash", "Pro-Lite - Surf Series 5ft", 45.00);
+    recebimento(3021, "Deck", "Channel Islands - Mixed Groove", 430.00);
+    recebimento(3008, "Parafina", "Sex Wax - Classic Cold", 200.00);
+    recebimento(3034, "Quilha", "FCS II Al Merrick - Ultra Light", 690.00);
+    recebimento(3011, "Leash", "FCS All Round - Essential 6ft", 315.00);
+    recebimento(3047, "Deck", "Dakine Carve - Pad Black Camo", 135.00);
+    recebimento(3026, "Parafina", "Mrs Palmers - Ultra Sticky", 500.00);
+    recebimento(3001, "Quilha", "Shapers Fins - Corelite AM2", 195.00);
+    recebimento(3039, "Leash", "Dakine John John - Recon Series", 565.00);
+    recebimento(3014, "Deck", "Creatures of Leisure - Icon Fish", 280.00);
+    recebimento(3028, "Parafina", "Sticky Bumps - Tour Series Extra", 400.00);
+    recebimento(3007, "Quilha", "Scarfini - FX2 Eco Glass Small", 89.00);
+    recebimento(3043, "Leash", "Modom - Standard 6ft Black", 215.00);
+    recebimento(3019, "Deck", "Gorilla Grip - Phils Industrial", 650.00);
+    recebimento(3050, "Parafina", "Banana Wax - Tropical Hard", 13.00);
+    recebimento(3012, "Quilha", "Futures Fins - Rasta Quad Bamboo", 445.00);
+    recebimento(3031, "Leash", "Dakine Pro Comp - 5ft Blue", 165.00);
+    recebimento(3006, "Deck", "FCS T-3 - Traction Mid Grey", 330.00);
+    recebimento(3037, "Parafina", "Terra Wax - Organic Eco", 600.00);
+    recebimento(3022, "Quilha", "Captain Fin - Mikey February Twin", 245.00);
+    recebimento(3004, "Leash", "FCS Freedom Helix - Premium", 620.00);
+    recebimento(3046, "Deck", "Astrodeck - Nathan Fletcher", 530.00);
+    recebimento(3017, "Parafina", "Bubble Gum - Hydro Tech", 300.00);
+    recebimento(3033, "Quilha", "FCS II Accelerator - Neo Glass", 145.00);
+    recebimento(3010, "Leash", "XM COMP - Tangle Free 6ft", 415.00);
+    recebimento(3041, "Deck", "Gorilla Grip - Skinny Series", 180.00);
+    recebimento(3025, "Parafina", "Sticky Bumps - Original Cold", 95.00);
+    recebimento(3005, "Quilha", "Naked Viking - Apex Quad Series", 395.00);
+    recebimento(3038, "Leash", "Pro-Lite - Heavy Duty 8ft", 515.00);
+    recebimento(3016, "Deck", "F Filipe Toledo - Pro Model", 480.00);
+    recebimento(3048, "Parafina", "Magical Wax - Competicao Grip", 250.00);
+    recebimento(3013, "Quilha", "Futures Fins - John John Techflex", 595.00);
+    recebimento(3035, "Leash", "Bullys - Essential 7ft", 115.00);
+    recebimento(3002, "Deck", "Onboard - Performance Pad", 380.00);
+    recebimento(3045, "Parafina", "Sex Wax - Mega Grip Tropical", 450.00);
+    recebimento(3020, "Quilha", "Feather Fins - Carbon Hybrid", 295.00);
+    recebimento(3032, "Leash", "Creatures of Leisure - Reliance 7ft", 265.00);
+    recebimento(3009, "Deck", "Onboard - Prone Series Pad", 75.00);
+    recebimento(3044, "Parafina", "Fu Wax - Cold Water Special", 350.00);
+    recebimento(3024, "Quilha", "True Ames - Greenough Single Fin", 495.00);
+    recebimento(3036, "Leash", "Ocean & Earth - ONE XT Premium", 365.00);
+    recebimento(3018, "Deck", "Famous Surf - The Drop Traction", 580.00);
+    recebimento(3040, "Parafina", "Ransom - Wax Cold Water", 550.00);
+    recebimento(3029, "Quilha", "Futures Fins - Legacy Series", 750.00);
+    recebimento(3003, "Leash", "Stay Covered - Big Wave 10ft", 465.00);
+    recebimento(3027, "Deck", "Creatures of Leisure - Mick Fanning", 720.00);
+    recebimento(3023, "Deck", "Shapers - Stealth Traction", 230.00);
 
     system("cls");
     int opcao, codigo;
