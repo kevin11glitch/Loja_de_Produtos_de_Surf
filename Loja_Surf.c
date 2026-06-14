@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <windows.h>
 typedef struct NO{
 
     //dados da aplicacao
@@ -199,7 +199,6 @@ NO* comprar_produto(int codigo){
         if (lixo->prox != NULL) { 
             lixo->prox->ant = aux; 
         }
-        aux->prox->ant = aux; 
 
         imprimir_produto_comprado(lixo);
         tam--;
@@ -254,7 +253,6 @@ void fila_pedidos_entrega(NO* produto_comprado, char *nome_cliente, char *cpf, c
         aux = aux->prox;
     }
 
-    free(produto_comprado);
 
 }
 
@@ -411,8 +409,8 @@ int main() {
             char *nome_cliente = malloc(sizeof(char)*255);
             char *nome_rua = malloc(sizeof(char)*255);
             char *complemento = malloc(sizeof(char)*255);
-            char *cpf = malloc(sizeof(char)*11);
-            char *cep = malloc(sizeof(char)*8);
+            char *cpf = malloc(sizeof(char)*15);
+            char *cep = malloc(sizeof(char)*15);
             int num_casa;
             printf("Digite o codigo do produto que gostaria de comprar: ");
             scanf("%d", &codigo);            
@@ -445,14 +443,14 @@ int main() {
             }else{
                 printf("=> Erro: Produto com codigo %d nao encontrado.\n\n", codigo);
             }
-            //system("pause");
+            Sleep(1500);
             break;
 
         case 5:
             system("cls");
             printf("=> Despachando pedido para o entregador...\n");
             entregar_pedido();
-            //system("pause");
+            Sleep(1500);
             break;
         
         case 6:
