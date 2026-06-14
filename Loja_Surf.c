@@ -27,8 +27,8 @@ typedef struct NO_FILA{
     float preco;
 
     char *nome_cliente;
-    int cpf;
-    int cep;
+    char *cpf;
+    char *cep;
     char *nome_rua;
     int num_casa;
     char *complemento;
@@ -159,7 +159,9 @@ void imprimir_produto_comprado(NO* produto){
 
 
 NO* comprar_produto(int codigo){
-
+    if (inicio == NULL) {
+        return NULL; 
+    }
     if(inicio->codigo == codigo){ //inicio
         NO *aux = inicio;
         inicio = inicio->prox;
@@ -182,14 +184,23 @@ NO* comprar_produto(int codigo){
     }else{
         //meio....
         NO *aux = inicio;
-        NO *lixo = aux;
-        while(aux->prox->codigo != codigo){
+
+        while(aux->prox != NULL && aux->prox->codigo != codigo){
             aux = aux->prox;
         }
-        lixo = aux->prox;
+
+        if (aux->prox == NULL) {
+            return NULL; 
+        }
+
+        NO *lixo = aux->prox;
         aux->prox = lixo->prox;
+
+        if (lixo->prox != NULL) { 
+            lixo->prox->ant = aux; 
+        }
         aux->prox->ant = aux; 
-        //free(lixo);
+
         imprimir_produto_comprado(lixo);
         tam--;
         return lixo;
@@ -197,7 +208,7 @@ NO* comprar_produto(int codigo){
     
 }
 
-void fila_pedidos_entrega(NO* produto_comprado, char *nome_cliente, int cpf, int cep, char *nome_rua, int num_casa, char *complemento){
+void fila_pedidos_entrega(NO* produto_comprado, char *nome_cliente, char *cpf, char *cep, char *nome_rua, int num_casa, char *complemento){
     NO_FILA *novo = malloc(sizeof(NO_FILA));
     novo->codigo = produto_comprado->codigo;
     novo->tipo_prod = produto_comprado->tipo_prod;
@@ -210,24 +221,77 @@ void fila_pedidos_entrega(NO* produto_comprado, char *nome_cliente, int cpf, int
     novo->num_casa = num_casa;
     novo->complemento = complemento;
     novo->prox = NULL;
+    free(produto_comprado);
 
     if(inicio_fila == NULL){ //fila vazia
         //operacao de encaixe
         inicio_fila = novo;
         fim_fila = novo;
-        tam++;
+        tam_fila++;
     }else{ // fila nao esta vazia...
         fim_fila->prox = novo;
         fim_fila = novo;
-        tam++;
+        tam_fila++;
+    }
+
+    NO_FILA * aux = inicio_fila;
+    printf("--- FILA DE PRODUTOS PARA ENTREGA ---\n\n");
+    while(aux != NULL){
+        printf("    -- PRODUTO -- \n");
+        printf("    Codigo do produto: %d \n", aux->codigo);
+        printf("    Tipo do produto: %s \n", aux->tipo_prod);
+        printf("    Descricao do produto: %s \n", aux->descricao);
+        printf("    Preco do produto: R$ %.2f \n\n", aux->preco);
+        printf("    -- CLIENTE -- \n");
+        printf("    Nome do cliente: %s \n", aux->nome_cliente);
+        printf("    CPF do cliente: %s \n", aux->cpf);
+        printf("    CEP do cliente: %s \n", aux->cep);
+        printf("    Nome da rua: %s \n", aux->nome_rua);
+        printf("    Numero da casa/apto: %d \n", aux->num_casa);
+        printf("    Complemento: %s \n\n", aux->complemento);
+        printf("-------------------------------------------\n\n");
+
+        aux = aux->prox;
     }
 
     free(produto_comprado);
 
 }
 
-void entregar_pedido(NO_FILA*produto){
+void entregar_pedido(){
+    if(inicio_fila == NULL){
+        printf("=> Nenhum pedido para entrega na fila!\n\n");
+        return;
+    }
 
+    NO_FILA*aux = inicio_fila;
+    inicio_fila = inicio_fila-> prox;
+
+    if(inicio_fila == NULL){
+        fim_fila = NULL;
+    }
+    tam_fila--;
+
+    printf("=> Pedido saindo para entrega...\n\n");
+    printf("-- PRODUTO --\n");
+    printf("Codigo: %d\n", aux->codigo);
+    printf("Tipo: %s\n", aux->tipo_prod);
+    printf("Descricao: %s\n", aux->descricao);
+    printf("Preco: %.2f\n\n", aux->preco);
+    printf("-- CLIENTE --\n");
+    printf("Nome: %s\n", aux->nome_cliente);
+    printf("CPF: %s\n", aux->cpf);
+    printf("CEP: %s\n", aux->cep);
+    printf("Nome da rua: %s\n", aux->nome_rua);
+    printf("Numero da casa: %d\n", aux->num_casa);
+    printf("Complemento: %s\n\n", aux->complemento);
+
+    free(aux->nome_cliente);
+    free(aux->cpf);
+    free(aux->cep);
+    free(aux->complemento);
+    free(aux->nome_rua);
+    free(aux);
 }
 
 void desenhar_surfista() {
@@ -307,7 +371,7 @@ int main() {
     int opcao, codigo;
     char escolha[50];
     float min, max;
-    printf("-- Bem-vindo(a) à loja Tati Surf Co! --\n\n");
+    printf("-- Bem-vindo(a) a loja Tati Surf Co! --\n\n");
     desenhar_surfista();
 
     do{
@@ -315,7 +379,8 @@ int main() {
         printf("-> Opcao 2: Ver produtos por categoria\n");
         printf("-> Opcao 3: Ver produtos por intervalo de valores\n");
         printf("-> Opcao 4: Comprar item\n");
-        printf("-> Opcao 5: Encerrar atendimento\n");
+        printf("-> Opcao 5: Despachar pedido para entrega\n");
+        printf("-> Opcao 6: Encerrar atendimento\n");
         printf("Escolha uma opcao de acao: ");
         scanf("%d", &opcao);
         switch (opcao)
@@ -343,42 +408,64 @@ int main() {
         
         case 4:
             system("cls");
-            char *nome, *nome_rua, *complemento;
-            int cpf, cep, num_casa;
+            char *nome_cliente = malloc(sizeof(char)*255);
+            char *nome_rua = malloc(sizeof(char)*255);
+            char *complemento = malloc(sizeof(char)*255);
+            char *cpf = malloc(sizeof(char)*11);
+            char *cep = malloc(sizeof(char)*8);
+            int num_casa;
             printf("Digite o codigo do produto que gostaria de comprar: ");
             scanf("%d", &codigo);            
             NO*produto_removido = comprar_produto(codigo);
 
-            printf("--- DIGITE SEUS DADOS PARA ENTREGA ---\n\n");
-            printf("Nome do Cliente: ");
-            scanf(" %[^\n]", nome);
-            printf("CPF (somente numeros): ");
-            scanf("%d", &cpf);
-            printf("CEP: ");
-            scanf("%d", &cep);
-            printf("Nome da Rua: ");
-            scanf(" %[^\n]", nome_rua);
-            printf("Numero da Casa/Apto: ");
-            scanf("%d", &num_casa);
-            printf("Complemento: ");
-            scanf(" %[^\n]", complemento);
+            if (produto_removido != NULL) {
+                printf("--- DIGITE SEUS DADOS PARA ENTREGA ---\n\n");
+                printf("Nome do Cliente: ");
+                scanf(" %[^\n]", nome_cliente);
 
-            fila_pedidos_entrega(produto_removido, nome, cpf, cep, nome_rua, num_casa, complemento);
-            printf("Pedido adicionado a fila de entregas com sucesso!\n\n");
+                printf("CPF (somente numeros): ");
+                scanf("%s", cpf);
 
+                printf("CEP: ");
+                scanf("%s", cep);
+
+                printf("Nome da Rua: ");
+                scanf(" %[^\n]", nome_rua);
+
+                printf("Numero da Casa/Apto: ");
+                scanf("%d", &num_casa);
+
+                printf("Complemento: ");
+                scanf(" %[^\n]", complemento);
+                system("cls");
+
+                fila_pedidos_entrega(produto_removido, nome_cliente, cpf, cep, nome_rua, num_casa, complemento);
+                
+                printf("=> Seu pedido foi adicionado a fila de entregas com sucesso, %s!\n\n", nome_cliente);
+            }else{
+                printf("=> Erro: Produto com codigo %d nao encontrado.\n\n", codigo);
+            }
+            //system("pause");
             break;
 
         case 5:
             system("cls");
-            printf("Encerrando atendimento. Volte sempre!");
+            printf("=> Despachando pedido para o entregador...\n");
+            entregar_pedido();
+            //system("pause");
+            break;
+        
+        case 6:
+            system("cls");
+            printf("=> Encerrando atendimento. Volte sempre!");
             break;
 
         default:
             system("cls");
-            printf("* Opcao %d nao existe -> Digite uma opcao valida.\n", opcao);
+            printf("=> Opcao %d nao existe: Digite uma opcao valida.\n", opcao);
             break;
         }
-    }while(opcao != 5);
+    }while(opcao != 6);
 
     
 
